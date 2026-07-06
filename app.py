@@ -25,21 +25,60 @@ st.markdown("""
 st.title("🚀 BIST Hacim & Yapay Zeka Destekli Akıllı Tarayıcı")
 st.subheader("Büyük Oyuncuların Girdiği Hacimli Hisseleri ve Yapay Zeka Sinyallerini Yakala")
 
-# BIST'teki Tüm Güncel Hisseleri İnternetten Otomatik Çeken Fonksiyon
+# BIST Hisselerini Garantili ve Eksiksiz Getiren Fonksiyon (Wikipedia Bağımlılığı Kaldırıldı)
 @st.cache_data(ttl=86400)
 def bist_tum_hisseleri_getir():
-    try:
-        url = "https://tr.wikipedia.org/wiki/Borsa_İstanbul%27da_işlem_gören_şirketler"
-        tablolar = pd.read_html(url)
-        df_hisse = tablolar[0]
-        
-        kod_sutunu = [col for col in df_hisse.columns if "Kod" in col or "Sembol" in col][0]
-        hisseler = df_hisse[kod_sutunu].dropna().astype(str).tolist()
-        
-        bist_listesi = [f"{hisse.strip().upper()}.IS" for hisse in hisseler if len(hisse.strip()) <= 5]
-        return sorted(list(set(bist_listesi)))
-    except:
-        return ["THYAO.IS", "ASELS.IS", "EREGL.IS", "TUPRS.IS", "ISCTR.IS", "BIMAS.IS", "KCHOL.IS", "SISE.IS", "GARAN.IS", "AKBNK.IS"]
+    hisseler = [
+        "A1CAP", "ACSEL", "ADEL", "ADESE", "AEFES", "AFYON", "AGESA", "AGHOL", "AGROT", "AHGAZ", 
+        "AKANS", "AKBNK", "AKCNG", "AKENR", "AKFGY", "AKFYE", "AKGRT", "AKMGY", "AKSA", "AKSEN", 
+        "ALARK", "ALBRK", "ALCAR", "ALCTL", "ALGYO", "ALKA", "ALKIM", "ALTNY", "ALVES", "ANACM", 
+        "ANELE", "ANGEN", "ANHYT", "ANSGR", "ARASE", "ARCLK", "ARDYZ", "ARENA", "ARSAN", "ARTMS", 
+        "ASGYO", "ASELS", "ASUZU", "ATAGY", "ATAKP", "ATATP", "ATEKS", "ATLAS", "ATSYH", "AVGYO", 
+        "AVHOL", "AVOD", "AVTUR", "AYDEM", "AYCES", "AYEN", "AYGAZ", "AZTEK", "BAGFS", "BAKAB", 
+        "BALAT", "BANVIT", "BARMA", "BASCM", "BASGZ", "BAYRK", "BEBEK", "BERA", "BEYAZ", "BFREN", 
+        "BIENY", "BIGCH", "BIMAS", "BIOEN", "BIZIM", "BJVRY", "BKTAS", "BLCYT", "BMSCH", "BMSTR", 
+        "BNTAS", "BOBET", "BORLE", "BORSK", "BOSSA", "BRISA", "BRKVY", "BRLSM", "BRMEN", "BRSAN", 
+        "BRYAT", "BSOKE", "BTCIM", "BUCIM", "BURCE", "BURVA", "BVSAN", "BYDNR", "CASA", "CCOLA", 
+        "CELHA", "CEMAS", "CEMTS", "CENGY", "CEOEM", "CIMSA", "CLEBI", "CMBTN", "CMENT", "CONSE", 
+        "COSMO", "CRDFA", "CRFSA", "CUSAN", "CVKMD", "CWENE", "DAGHL", "DAGI", "DAPGM", "DARDL", 
+        "DGATE", "DGGYO", "DGNMO", "DIRIT", "DITAS", "DMSAS", "DOAS", "DOCO", "DOFER", "DOGUB", 
+        "DOHOL", "DOKTA", "DURDO", "DYOBY", "DZGYO", "EDATA", "EDIP", "EGEEN", "EGGUB", "EGPRO", 
+        "EGSER", "EKGYO", "EKIZ", "EKLMN", "EKOS", "ELITE", "EMKEL", "ENJSA", "ENKAI", "ENTSK", 
+        "EUPWR", "EUREK", "EREGL", "ERSU", "ESCOM", "ESEN", "ETILR", "ETYAT", "EUHOL", "EUKYO", 
+        "EXUN", "EYGYO", "FADE", "FENER", "FLAP", "FMIZP", "FONET", "FORMT", "FRIGO", 
+        "FROTO", "FZLGY", "GARAN", "GARFA", "GEDIK", "GEDZA", "GENTS", "GEREL", "GESAN", "GIPTA", 
+        "GLBMD", "GLCVY", "GLRYH", "GLYHO", "GMTTR", "GNEIL", "GOODY", "GOZDE", "GRNYO", "GRSEL", 
+        "GSDHO", "GSDDE", "GSRAY", "GUBRF", "GWIND", "GZNMI", "HALKB", "HATEK", "HATSN", "HDFGS", 
+        "HEDEF", "HEKTS", "HKTM", "HLGYO", "HTTBT", "HUBVC", "HUNER", "HURGZ", "ICBCT", "IDEAS", 
+        "IDGYO", "IEYHO", "IHAAS", "IHEVA", "IHGZT", "IHLAS", "IHLGM", "IHMAD", "IKGMT", "INGRM", 
+        "INTEM", "INVEO", "INVES", "IPEKE", "ISATR", "ISBTR", "ISCTR", "ISFIN", "ISGSY", "ISGYO", 
+        "ISMEN", "ISSTK", "ISSEN", "ITTFH", "IZENR", "IZFAS", "IZMDC", "IZINV", "JANTS", "KAPLM", 
+        "KARYE", "KATMR", "KAYSE", "KCAER", "KCHOL", "KENT", "KERVN", "KERVT", "KFEIN", "KGYO", 
+        "KHOL", "KIMMR", "KLGYO", "KLMSN", "KLNMA", "KLRMY", "KLSN", "KLYHO", "KMELE", "KMPUR", 
+        "KONTR", "KONYA", "KORDS", "KOTON", "KOZAL", "KOZAA", "KRALS", "KRVGD", "KSTUR", "KTLEV", 
+        "KTSKR", "KUTPO", "KUVVA", "KUYAS", "LIDER", "LIDFA", "LINK", "LKMNH", "LMKDC", "LOGAN", 
+        "LSTK", "LUKSK", "MAALT", "MACKO", "MAGEN", "MAKIM", "MAKTK", "MANAS", "MARKA", "MARTI", 
+        "MAVI", "MEDTR", "MEGAP", "MEGMT", "MEPET", "MERCN", "MERIT", "MERKO", "METRO", 
+        "METUR", "MHRGY", "MIATK", "MIPAZ", "MMCPA", "MNDRS", "MNDTR", "MOBTL", "MOGAN", "MPARK", 
+        "MRGGY", "MRSHL", "MSGYO", "MTRKS", "MTRYO", "MZHLD", "NIBAS", "NETAS", "NTHOL", "NUGYO", 
+        "NUHCM", "OBASE", "OBLIV", "ODAS", "OFSYM", "ONCSM", "ORCA", "IDGE", "ORMA", "OYAKC", 
+        "OYAYO", "OYLUM", "OYYAT", "OZGYO", "OZKGY", "OZSUB", "PAGYO", "PAMEL", "PAPIL", "PARSN", 
+        "PASEI", "PATRK", "PCILT", "PEGYO", "PEKGY", "PENGD", "PENTA", "PETKM", "PETUN", "PGSUS", 
+        "PINSU", "PKART", "PKENT", "PLTUR", "PNLSN", "PNSUT", "POLHO", "POLTK", "PRKAB", "PRKME", 
+        "PRZMA", "PSDTC", "PSGYO", "QUAGR", "RALYH", "RAYSG", "REEDR", "RHEAG", "RNPOL", "RODRG", 
+        "ROYAL", "RYSAS", "RYGYO", "SAHOL", "SAMAT", "SANEL", "SANFM", "SANKO", "SARKY", "SAYAS", 
+        "SDTTR", "SEGYO", "SEKFK", "SEKO", "SELEC", "SELVA", "SEYKM", "SILVR", "SISE", "SKBNK", 
+        "SKTAS", "SMART", "SMRTG", "SNGYO", "SNICA", "SNKRN", "SNPAM", "SODSN", "SOKM", "SONME", 
+        "SRVGY", "SUMAS", "SUNTC", "SURGY", "SUWEN", "TABGD", "TAFIL", "TARKM", "TATGD", "TAVHL", 
+        "TBORG", "TCELL", "TDGYO", "TEKTU", "TERA", "TETMT", "TEZOL", "THYAO", "TLMAN", "TMPOL", 
+        "TMSN", "TOASO", "TRCAS", "TRGYO", "TRILC", "TRYAT", "TSKB", "TSGYO", "TSPOR", "TTKOM", 
+        "TTRAK", "TUCLK", "TUKAS", "TUPRS", "TUREX", "TURGG", "TURSG", "UFUK", "ULAS", "ULFA", 
+        "ULKER", "ULUFA", "ULUSE", "UNLU", "USAK", "UTPYA", "VAKFN", "VAKKO", "VAKNY", "VALF", 
+        "VANGD", "VBTYZ", "VERTU", "VESTL", "VESBE", "VKGYO", "VKING", "VRGYO", "YAYLA", "YAPRK", 
+        "YKBNK", "YKGYO", "YLNMG", "YONGA", "YOTAS", "YYAPI", "YYLGD", "ZEDUR", "ZOREN", "ZRGYO"
+    ]
+    bist_listesi = [f"{hisse.strip().upper()}.IS" for hisse in hisseler]
+    return sorted(list(set(bist_listesi)))
 
 # Veri Çekme Fonksiyonu
 @st.cache_data(ttl=3600)
@@ -113,7 +152,6 @@ if st.button("🔍 TÜM BIST HİSSELERİNİ (HACİM ODAKLI) TARAMAYA BAŞLAT"):
         df = veri_getir(ticker)
         if df is not None and len(df) > 80:
             try:
-                # Tek seferde tüm verileri alarak hızı 2 katına çıkarıyoruz
                 yz_skoru, rsi_degeri, son_fiyat, hacim_artisi = teknik_ve_yz_analiz(df.copy())
                 
                 if yz_skoru > 0.60 and rsi_degeri < 65 and hacim_artisi >= 1.20:
